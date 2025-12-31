@@ -187,13 +187,13 @@
 
 <Toolbar>
   <div class="toolbar-item">
-    <Button caption="Add" type="text" icon="add" href="/manage/user/create" />
+    <Button caption="Add" type="text" icon="plus.svg" href="/manage/user/create" />
   </div>
   <div class="toolbar-item">
-    <Button caption="Filter" type="text" icon="filter" on:click={() => showFilterDropdown = !showFilterDropdown} />
+    <Button caption="Filter" type="text" icon="filter.svg" on:click={() => showFilterDropdown = !showFilterDropdown} />
   </div>
   <div class="toolbar-item">
-    <SelectDropdown options={sortOptions} icon="sort" style="flat" change={sortList} />
+    <SelectDropdown options={sortOptions} icon="sort.svg" style="flat" change={sortList} />
   </div>
   {#if checkboxSelected}
     <div class="toolbar-item">
@@ -217,8 +217,6 @@
       <tr>
         <th>User</th>
         <th></th>
-        <th>Type</th>
-        <th>OEL ID</th>
         <th>Date joined</th>
       </tr>
     </thead>
@@ -236,12 +234,6 @@
           </td>
           <td class="edit-link">
             <a href="/manage/user/{user.id}" class="edit"><img src="/images/pencil-outline.svg" width="24" alt="Edit" />Edit</a>
-          </td>
-          <td>
-            {config.userTypes.find(obj => obj.id == user.type)?.label}
-          </td>
-          <td>
-            {user.hr_id}
           </td>
           <td>
             {dayjs(user.created).format("DD/MM/YYYY")}

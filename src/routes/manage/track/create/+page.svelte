@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import { fade } from 'svelte/transition';
   import Banner from "$lib/structure/Banner.svelte";
-  import TrackForm from '../TrackForm.svelte';
+  import TrackForm from '../../../TrackForm.svelte';
   
   let backLink = $page.url.searchParams.get("returnURL") ?? "/";
 </script>

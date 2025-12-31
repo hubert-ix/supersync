@@ -10,8 +10,4 @@
 
 <div class="link-boxes" in:fade>
   <a href="/admin/users">Users</a>
-  <a href="/admin/content">Content</a>
-  {#if data.currentUser.permissions.super_admin}
-    <a href="/admin/settings">Settings</a>
-  {/if}
 </div>

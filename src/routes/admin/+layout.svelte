@@ -9,11 +9,7 @@
   
   let navOptions = $state([
     {href: '/admin/users', label: 'Users', value: 'users'},
-    {href: '/admin/content', label: 'Content', value: 'content'},
   ]);
-  if (data.currentUser.permissions.super_admin) {
-    navOptions.push({href: '/admin/settings', label: 'Settings', value: 'settings'});
-  }
   let segment = $derived($page.url.pathname.split("/")[2]?$page.url.pathname.split("/")[2]:"");
   let isSubPage = $derived($page.url.pathname.split("/")[3] !== undefined);
   let isLandingPage = $derived((segment == ""));

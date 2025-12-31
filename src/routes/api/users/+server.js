@@ -18,11 +18,7 @@ import dayjs from 'dayjs';
 can be filtered by:
 - slug
 - email
-- initials
-- type (we can ask for multiple types by separating them with "||")
-- project_id
 - user_id
-- course_id
 */
 export async function GET({ locals, url }) {
   // gather the parameters
@@ -32,24 +28,14 @@ export async function GET({ locals, url }) {
   let sort_order = url.searchParams.get('sort_order') ?? 'desc';
   let search = url.searchParams.get('search');
   let slug = url.searchParams.get('slug');
-  let initials = url.searchParams.get('initials');
-  let type = url.searchParams.get('type');
   let email = url.searchParams.get('email');
-  let project_id = url.searchParams.get('project_id');
-  let course_id = url.searchParams.get('course_id');
   let user_id = url.searchParams.get('user_id');
   let start = (page - 1) * limit;
   let end = parseInt(start) + parseInt(limit) - 1;
   // call supabase
   let select = "*";
-  if (project_id) {
-    select += ", project_user!inner(*)";
-  }
-  if (course_id) {
-    select += ", enrolment!inner(id)";
-  }
   let promise = locals.supabase
-    .from("profile")
+    .from("user")
     .select(select)
     .order(sort_by, { ascending: (sort_order == "asc") })
     .range(start, end)
@@ -62,39 +48,11 @@ export async function GET({ locals, url }) {
   if (slug) {
     promise = promise.eq('slug', slug)
   }
-  if (initials) {
-    promise = promise.eq('initials', initials)
-  }
-  if (project_id) {
-    promise.eq("project_user.project_id", project_id);
-    if (type) {
-      let arr = type.split("||");
-      promise = promise.in('project_user.type', arr);
-    }
-  }
-  else {
-    if (type) {
-      let arr = type.split("||");
-      promise = promise.in('type', arr);
-    }
-  }
-  if (course_id) {
-    promise.eq("enrolment.course_id", course_id);
-  }
   if (user_id) {
     promise.eq("user_id", user_id);
   }
   let response = await promise;
   let users = response.data ?? [];
-  // if we filter by project, we add the display order
-  if (project_id) {
-    for (let i in users) {
-      users[i].display_order = users[i].project_user[0].display_order;
-      users[i].project_roles = users[i].project_user[0].roles;
-      users[i].registration = users[i].project_user[0];
-      delete users[i].project_user;
-    }
-  }
   // figure out the pagination
   let next_page = (users.length >= limit)?parseInt(page) + 1:false;
   let pagination = { next_page };
