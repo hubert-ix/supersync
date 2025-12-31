@@ -120,3 +120,17 @@ export function generateString(length, includeSpecialCharacters = true) {
   }
   return string;
 }
+
+export async function sendEmail(to, subject, html) {
+  /*const resend = new Resend(PUBLIC_RESEND_KEY);
+  const { data, error } = await resend.emails.send({
+    from: 'Future Orthodontics <no-reply@weareverse.com>',
+    to: [to],
+    subject,
+    html,
+  });
+  console.log("Sent email", data)
+  if (error) {
+    console.error("ERROR SENDING EMAIL", error);
+  }*/
+}

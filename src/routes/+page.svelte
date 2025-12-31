@@ -32,6 +32,10 @@
   let searching = $state(false);
   let filtering = $state(false);
   let sorting = $state(false);
+  let currentSort = $state({
+    id: "title",
+    order: "asc"
+  });
   let sortOptions = [
     {id: "title|asc", label: "Title"},
     {id: "created|desc", label: "Date added (desc)"},  
@@ -155,8 +159,17 @@
       params.page = 1;
       let temp = sortCriteria.split("|");
       params.sort_by = temp[0];
-      params.sort_order = temp[1];
       params.sort_foreign = (temp.length > 2)?temp[2]:null;
+      if (currentSort.id == temp[0]) {
+        params.sort_order = (currentSort.order == "asc")?"desc":"asc";
+      }
+      else {
+        params.sort_order = "asc";
+      }
+      currentSort = {
+        id: params.sort_by,
+        order: params.sort_order
+      }
       await loadTracks();
       sorting = false;
     }
@@ -201,9 +214,11 @@
       <div class="toolbar-item">
         <SelectDropdown options={albumOptions} bind:selectedValue={selectedAlbumId} icon="filter.svg" change={filterList} />
       </div>
+      <!--
       <div class="toolbar-item">
         <SelectDropdown options={sortOptions} icon="sort.svg" change={sortList} />
       </div>
+      -->
       <div class="toolbar-item search last">
         <ToolbarSearch search={searchList} />
       </div>
@@ -238,19 +253,44 @@
       </div>
     {/if}
 
-    <div class="count">
-      {totalCount} results
-    </div>
-
     {#if (tracks.length)}
       <div class="table-wrap">
         <table class:masked={showLoadingMask}>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Library</th>
-              <th>Album</th>
-              <th>Date created</th>
+              <th>
+                <div class="sort-link" onclick={() => sortList("title")}>
+                  Title ({totalCount})
+                  {#if currentSort.id == "title"}
+                    <div class="sort-direction" class:up={currentSort.order == "asc"}>
+                      <img src="/images/down.png" alt="arrow" width="16" />
+                    </div>
+                  {/if}
+                </div>
+              </th>
+              <th>
+                Library
+              </th>
+              <th>
+                <div class="sort-link" onclick={() => sortList("album(title),title")}>
+                  Album
+                  {#if currentSort.id == "album(title),title"}
+                    <div class="sort-direction" class:up={currentSort.order == "asc"}>
+                      <img src="/images/down.png" alt="arrow" width="16" />
+                    </div>
+                  {/if}
+                </div>
+              </th>
+              <th>
+                <div class="sort-link" onclick={() => sortList("created")}>
+                  Date created
+                  {#if currentSort.id == "created"}
+                    <div class="sort-direction" class:up={currentSort.order == "asc"}>
+                      <img src="/images/down.png" alt="arrow" width="16" />
+                    </div>
+                  {/if}
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -322,29 +362,19 @@
     margin-bottom: 2rem;
   }
 
-  .count {
-    color: #000;
-    margin-bottom: 1rem;
-    text-align: right;
-  }
-
-  .filter-dropdown {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 1rem;
-    padding-top: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .filter-dropdown-header {
-    margin-bottom: 0.5rem;
-    color: #272759;
-    font-size: .875rem;
-  }
-
-  .filter-buttons {
-    grid-column-gap: 0.5rem;
-    grid-row-gap: 1rem;
+  .sort-link {
+    cursor: pointer;
     display: flex;
+    grid-gap: 0.5rem;
+  }
+
+  .sort-direction {
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+  }
+
+  .sort-direction.up {
+    transform: rotate(180deg);
   }
 </style>
