@@ -1,0 +1,41 @@
+.rx-container.rx-main-container {
+  border-color: transparent;
+}
+
+.rx-content, .rx-content p {
+  font-family: var(--font-body);
+	color: var(--color-text);
+  font-size: 1rem;
+	line-height: 1.6;
+}
+
+.rx-content {
+  padding: 5px 15px !important;
+}
+
+.rx-content a {
+	text-decoration: none;
+	outline: none;
+	cursor: pointer;
+	color: var(--color-secondary);
+}
+
+.rx-content .margin-bottom-x-small {
+  margin-bottom: var(--margin-x-small);
+}
+
+.rx-content .margin-bottom-small {
+  margin-bottom: var(--margin-small);
+}
+
+.rx-content .margin-bottom-medium {
+  margin-bottom: var(--margin-medium);
+}
+
+.rx-content .margin-bottom-large {
+  margin-bottom: var(--margin-large);
+}
+
+.rx-content .margin-bottom-x-large {
+  margin-bottom: var(--margin-x-large);
+}
