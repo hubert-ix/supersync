@@ -296,7 +296,9 @@
           <tbody>
             {#each tracks as track}
               <tr onclick={() => openTrack(track)}>
-                <td>{track.title}</td>
+                <td class="title">
+                  {track.title}
+                </td>
                 <td>
                   {#each track.libraries as library}
                     {library.title}
@@ -305,7 +307,9 @@
                 <td>
                   {track.album?.title}
                 </td>
-                <td>{dayjs(track.created).format("DD/MM/YYYY")}</td>
+                <td>
+                  {dayjs(track.created).format("DD/MM/YYYY")}
+                </td>
               </tr>
               {#if track.show_form}
                 <tr>
@@ -376,5 +380,13 @@
 
   .sort-direction.up {
     transform: rotate(180deg);
+  }
+
+  td.title {
+    color: #9057b2;
+  }
+
+  tr {
+    cursor: pointer;
   }
 </style>

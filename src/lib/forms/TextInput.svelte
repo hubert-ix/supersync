@@ -154,7 +154,7 @@
   }
 
   input:focus, textarea:focus {
-    border-color: #66c0b8; 
+    border-color: var(--color-borders); 
     outline: none;
   }
   

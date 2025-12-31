@@ -8,6 +8,7 @@
     inline = false,
     disabled = false,
     enableAutoUpdate = false,
+    style = "",
     change = () => {}
   } = $props();
 
@@ -20,7 +21,7 @@
 </script>
 
 
-<div class:inline class:disabled>
+<div class:inline class:disabled class={style}>
   {#each options as option (option.id)}
     <div class="item">
       <input type="radio" {name} value={option.id} bind:group={value} id="radio-{name}-{option.id}" {disabled} onchange={changed} /> 
@@ -57,6 +58,12 @@
     position: relative;
     top: -4px;
     font-size: 15px;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 1rem;
   }
   
   [type="radio"]:not(:checked),

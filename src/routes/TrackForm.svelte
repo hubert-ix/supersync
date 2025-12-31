@@ -65,17 +65,6 @@
     onSubmit: async values => {
       submitting = true;
       onSubmit(values);
-      /*
-      if (mode == "add") {
-        let response = await api.post(fetch, "/api/tracks", values);
-        goto(response.path);
-      }
-      else {
-        await api.patch(fetch, "/api/tracks/" + track.id, values);
-        snackbarStore.addMessage("The changes have been saved");
-        invalidate("track");
-        submitting = false;
-      }*/
     }
   });
 
@@ -174,7 +163,7 @@
       </FormItem>
 
       <FormItem label="Album" id="edit-album">
-        <RadioInput name="edit-album" options={albums} bind:value={$form.album_id} />
+        <RadioInput name="edit-album" options={albums} bind:value={$form.album_id} style="columns" />
         <!--<SelectDropdown options={albums} bind:selectedOption={$form.album_id} style="form" />-->
         <div class="add-link" onclick={openAddAlbum}>
           Add album
@@ -248,7 +237,8 @@
 <style>
   .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 2fr 0.5fr;
+    grid-gap: 1rem;
   }
 
   .add-link {
