@@ -10,9 +10,6 @@
   import LoadingSpinner from "$lib/UI/LoadingSpinner.svelte";
   import AdminSkeleton from '$lib/skeletons/AdminSkeleton.svelte';
   import Banner from '$lib/structure/Banner.svelte';
-  import RadioInput from '$lib/forms/RadioInput.svelte';
-  import DateTimeInput from '$lib/forms/DateTimeInput.svelte';
-  import AutocompleteLibrary from '$lib/forms/AutocompleteLibrary.svelte';
   import AutocompleteUser from '$lib/forms/AutocompleteUser.svelte';
   import NoResults from '$lib/structure/NoResults.svelte';
   import TrackForm from './TrackForm.svelte';
@@ -55,6 +52,7 @@
   let showFilterDropdown = $state(false);
   let selectedLibraryId = $state(0);
   let selectedAlbumId = $state(0);
+  let selectedStatusId = $state(0);
   let showLoadingMask = ($derived(sorting || filtering || searching));
 
   let libraryOptions = [{
@@ -78,6 +76,20 @@
       label: albums[i].title
     });
   }
+
+  let statusOptions = [{
+    id: 0,
+    label: "All"
+  },
+  {
+    id: "signed",
+    label: "Signed"
+  },
+  {
+    id: "unsigned",
+    label: "Unsigned"
+  }
+  ]
 
   onMount(async () => {
     // load tracks
@@ -139,6 +151,12 @@
       }
       else {
         delete params.album_id;
+      }
+      if (selectedStatusId) {
+        params.status = selectedStatusId;
+      }
+      else {
+        delete params.status;
       }
       await loadTracks();
       filtering = false;
@@ -214,6 +232,9 @@
       <div class="toolbar-item">
         <SelectDropdown options={albumOptions} bind:selectedValue={selectedAlbumId} icon="filter.svg" change={filterList} />
       </div>
+      <div class="toolbar-item">
+        <SelectDropdown options={statusOptions} bind:selectedValue={selectedStatusId} icon="filter.svg" change={filterList} />
+      </div>
       <!--
       <div class="toolbar-item">
         <SelectDropdown options={sortOptions} icon="sort.svg" change={sortList} />
@@ -258,6 +279,7 @@
         <table class:masked={showLoadingMask}>
           <thead>
             <tr>
+              <th></th>
               <th>
                 <div class="sort-link" onclick={() => sortList("title")}>
                   Title ({totalCount})
@@ -294,8 +316,11 @@
             </tr>
           </thead>
           <tbody>
-            {#each tracks as track}
+            {#each tracks as track, index}
               <tr onclick={() => openTrack(track)}>
+                <td>
+                  {index + 1}
+                </td>
                 <td class="title">
                   {track.title}
                 </td>

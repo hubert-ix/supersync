@@ -18,7 +18,7 @@ export async function GET({ locals, params, url }) {
 ******************/
 export async function PATCH({ locals, params, request, fetch }) {
   const values = await request.json();
-  let allowedProps = ["album_id", "libraries", "status", "title"];
+  let allowedProps = ["album_id", "created", "libraries", "status", "title"];
   for (let key in values) {
     if (!allowedProps.includes(key)) {
       console.log("Prop " + key + " is not allowed");

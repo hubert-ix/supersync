@@ -9,6 +9,7 @@
   import TextInput from "$lib/forms/TextInput.svelte";
   import RadioInput from "$lib/forms/RadioInput.svelte";
   import CheckboxInput from "$lib/forms/CheckboxInput.svelte";
+  import DateTimeInput from '$lib/forms/DateTimeInput.svelte';
   import SelectDropdown from "$lib/UI/SelectDropdown.svelte";
   import FloatingButtons from '$lib/UI/FloatingButtons.svelte';
   import LoadingSpinner from '$lib/UI/LoadingSpinner.svelte';
@@ -52,6 +53,7 @@
   const { form, errors, handleChange, handleSubmit } = createForm({
     initialValues: {
       album_id: (mode == "edit")?track.album_id:0,
+      created: (mode == "edit")?track.created:dayjs().format("MM/DD/YYYY"),
       title: (mode == "edit")?track.title:"",
       status: (mode == "edit")?track.status:"unsigned",
     },
@@ -151,6 +153,10 @@
     
     <FormItem label="Track title" id="edit-title" errorMessage={$errors.title}>
       <TextInput id="edit-title" on:change={handleChange} bind:value={$form.title} />
+    </FormItem>
+
+    <FormItem label="Date created">
+      <DateTimeInput includeTime={false} labelDate="" bind:value={$form.created} />
     </FormItem>
 
     <div class="grid">
