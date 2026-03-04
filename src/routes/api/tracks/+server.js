@@ -27,9 +27,9 @@ export async function GET({ locals, url }) {
   let start = (page - 1) * limit;
   let end = parseInt(start) + parseInt(limit) - 1;
   // call supabase
-  let select = '*, album(*), library_track(library(*))';
+  let select = '*, album(*), library_track(*), tag_track(*)';
   if (library_id) {
-    select = '*, album(*), library_track!inner(library(*))';
+    select = '*, album(*), library_track!inner(*)';
   }
   let promise = locals.supabase.from("track").select(select);
   promise = filterPromise(promise, search, status, library_id, album_id, sort_foreign, sort_by, sort_order);
@@ -47,9 +47,17 @@ export async function GET({ locals, url }) {
   for (let i in tracks) {
     tracks[i].libraries = [];
     for (let j in tracks[i].library_track) {
-      tracks[i].libraries.push(tracks[i].library_track[j].library);
+      tracks[i].libraries.push(tracks[i].library_track[j].library_id);
     }
     delete(tracks[i].library_track);
+  }
+  // tidy up tags
+  for (let i in tracks) {
+    tracks[i].tags = [];
+    for (let j in tracks[i].tag_track) {
+      tracks[i].tags.push(tracks[i].tag_track[j].tag_id);
+    }
+    delete(tracks[i].tag_track);
   }
   // figure out the pagination
   let next_page = (tracks.length >= limit)?parseInt(page) + 1:false;

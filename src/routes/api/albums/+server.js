@@ -22,7 +22,7 @@ export async function GET({ locals, url }) {
   // call supabase
   let promise = locals.supabase
     .from("album")
-    .select()
+    .select('*,track(count)')
     .order(sort_by, { ascending: (sort_order == "asc") })
     .range(start, end)
   if (search) {
@@ -30,6 +30,10 @@ export async function GET({ locals, url }) {
   }
   let response = await promise;
   let albums = response.data ?? [];
+  for (let i in albums) {
+    albums[i].count_tracks = albums[i].track[0].count;
+    delete albums[i].track;
+  }
   // figure out the pagination
   let next_page = (albums.length >= limit)?parseInt(page) + 1:false;
   let pagination = { next_page };

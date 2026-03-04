@@ -18,7 +18,7 @@ export async function GET({ locals, params, url }) {
 ******************/
 export async function PATCH({ locals, params, request, fetch }) {
   const values = await request.json();
-  let allowedProps = ["album_id", "created", "libraries", "status", "title"];
+  let allowedProps = ["album_id", "created", "libraries", "status", "tags", "title"];
   for (let key in values) {
     if (!allowedProps.includes(key)) {
       console.log("Prop " + key + " is not allowed");
@@ -26,13 +26,20 @@ export async function PATCH({ locals, params, request, fetch }) {
     }
   }
   let libraries = values.libraries;
+  let tags = values.tags;
   delete values.libraries;
+  delete values.tags;
   // update the track
   await locals.supabase.from('track').update(values).eq('id', params.id);
   // update libraries links
   await locals.supabase.from('library_track').delete().eq('track_id', params.id);
   for (let i in libraries) {
     await locals.supabase.from("library_track").insert({track_id: params.id, library_id: libraries[i]});
+  }
+  // update tags links
+  await locals.supabase.from('tag_track').delete().eq('track_id', params.id);
+  for (let i in libraries) {
+    await locals.supabase.from("tag_track").insert({track_id: params.id, tag_id: tags[i]});
   }
   return json({});
 }

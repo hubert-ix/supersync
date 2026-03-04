@@ -19,6 +19,7 @@
   let { data } = $props();
   let libraries = $state(data.libraries);
   let albums = $state(data.albums);
+  let tags = $state(data.tags);
   let tracks = $state([]);
   let totalCount = $state();
   let showAddtrack = $state(false);
@@ -62,7 +63,7 @@
   for (let i in libraries) {
     libraryOptions.push({
       id: libraries[i].id,
-      label: libraries[i].title
+      label: libraries[i].title + ' (' + libraries[i].count_tracks + ')'
     });
   }
 
@@ -73,7 +74,7 @@
   for (let i in albums) {
     albumOptions.push({
       id: albums[i].id,
-      label: albums[i].title
+      label: albums[i].title + ' (' + albums[i].count_tracks + ')'
     });
   }
 
@@ -268,6 +269,7 @@
         <TrackForm 
           {libraries}
           {albums}
+          {tags}
           onCancel={() => showAddtrack = false} 
           onSubmit={addTrack}
         />
@@ -279,7 +281,7 @@
         <table class:masked={showLoadingMask}>
           <thead>
             <tr>
-              <th></th>
+              <th class="number"></th>
               <th>
                 <div class="sort-link" onclick={() => sortList("title")}>
                   Title ({totalCount})
@@ -304,6 +306,9 @@
                 </div>
               </th>
               <th>
+                Tags
+              </th>
+              <th>
                 <div class="sort-link" onclick={() => sortList("created")}>
                   Date created
                   {#if currentSort.id == "created"}
@@ -325,12 +330,17 @@
                   {track.title}
                 </td>
                 <td>
-                  {#each track.libraries as library}
-                    {library.title}
+                  {#each track.libraries as libraryId}
+                    {libraries.find(l => l.id == libraryId)?.title}
                   {/each}
                 </td>
                 <td>
                   {track.album?.title}
+                </td>
+                <td>
+                  {#each track.tags as tagId}
+                    {tags.find(l => l.id == tagId)?.title}
+                  {/each}
                 </td>
                 <td>
                   {dayjs(track.created).format("DD/MM/YYYY")}
@@ -338,11 +348,12 @@
               </tr>
               {#if track.show_form}
                 <tr>
-                  <td colspan="4" class="bare">
+                  <td colspan="5" class="bare">
                     <TrackForm 
                       {libraries} 
                       {albums} 
                       {track} 
+                      {tags}
                       onCancel={() => track.show_form = false}
                       onSubmit={(values) => updateTrack(track, values)}
                     />
@@ -413,5 +424,9 @@
 
   tr {
     cursor: pointer;
+  }
+
+  th.number {
+    width: 2rem;
   }
 </style>

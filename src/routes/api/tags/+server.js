@@ -2,7 +2,7 @@ import { json, error } from '@sveltejs/kit';
 
 
 /*******************************
-* retrieve a list of libraries *
+* retrieve a list of tags *
 ********************************
 - limit: the maximum number of results
 - page: the page to return
@@ -22,8 +22,8 @@ export async function GET({ locals, url }) {
   let end = parseInt(start) + parseInt(limit) - 1;
   // call supabase
   let promise = locals.supabase
-    .from("library")
-    .select('*, library_track(count)')
+    .from("tag")
+    .select()
     .order(sort_by, { ascending: (sort_order == "asc") })
     .range(start, end)
   if (search) {
@@ -33,29 +33,25 @@ export async function GET({ locals, url }) {
     promise.eq("status", status);
   }
   const { data } = await promise;
-  let libraries = data ?? [];
-  for (let i in libraries) {
-    libraries[i].count_tracks = libraries[i].library_track[0].count;
-    delete libraries[i].library_track;
-  }
+  let tags = data ?? [];
   // figure out the pagination
-  let next_page = (libraries.length >= limit)?parseInt(page) + 1:false;
+  let next_page = (tags.length >= limit)?parseInt(page) + 1:false;
   let pagination = { next_page };
-  return json({ libraries, pagination });
+  return json({ tags, pagination });
 }
 
 
-/***********************
-* create a new library *
-***********************/
+/*******************
+* create a new tag *
+********************/
 export async function POST({ locals, request }) {
   const values = await request.json();
   // check required prop
-  let requiredProps = ["name"];
+  let requiredProps = ["title"];
   /*if (!includesAll(values, requiredProps)) {
     error(403, "Missing required props");
   }*/
-  let response = await locals.supabase.from("library").insert(values).select();
+  let response = await locals.supabase.from("tag").insert(values).select();
   if (response.error) {
     error(403, response.error.message);
   }
