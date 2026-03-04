@@ -23,7 +23,7 @@ export async function GET({ locals, url }) {
   // call supabase
   let promise = locals.supabase
     .from("tag")
-    .select()
+    .select('*, tag_track(count)')
     .order(sort_by, { ascending: (sort_order == "asc") })
     .range(start, end)
   if (search) {
@@ -32,8 +32,13 @@ export async function GET({ locals, url }) {
   if (status) {
     promise.eq("status", status);
   }
-  const { data } = await promise;
-  let tags = data ?? [];
+  let response = await promise;
+  console.log(response)
+  let tags = response.data ?? [];
+  for (let i in tags) {
+    tags[i].count_tracks = tags[i].tag_track[0].count;
+    delete tags[i].tag_track;
+  }
   // figure out the pagination
   let next_page = (tags.length >= limit)?parseInt(page) + 1:false;
   let pagination = { next_page };

@@ -24,20 +24,30 @@ export async function GET({ locals, url }) {
   let status = url.searchParams.get('status');
   let library_id = url.searchParams.get('library_id');
   let album_id = url.searchParams.get('album_id');
+  let tag_id = url.searchParams.get('tag_id');
   let start = (page - 1) * limit;
   let end = parseInt(start) + parseInt(limit) - 1;
   // call supabase
-  let select = '*, album(*), library_track(*), tag_track(*)';
+  let select = '*, album(*)';
   if (library_id) {
-    select = '*, album(*), library_track!inner(*)';
+    select += ', library_track!inner(*)';
+  }
+  else {
+    select += ', library_track(*)';
+  }
+  if (tag_id) {
+    select += ', tag_track!inner(*)';
+  }
+  else {
+    select += ', tag_track(*)';
   }
   let promise = locals.supabase.from("track").select(select);
-  promise = filterPromise(promise, search, status, library_id, album_id, sort_foreign, sort_by, sort_order);
+  promise = filterPromise(promise, search, status, library_id, album_id, tag_id, sort_foreign, sort_by, sort_order);
   // range
   promise.range(start, end);
   // count total records
   let promiseCount = locals.supabase.from('track').select(select, { count: 'exact', head: true });
-  promiseCount = filterPromise(promiseCount, search, status, library_id, album_id, sort_foreign, sort_by, sort_order);
+  promiseCount = filterPromise(promiseCount, search, status, library_id, album_id, tag_id, sort_foreign, sort_by, sort_order);
   let responseCount = await promiseCount;
   let count = responseCount.count;
   // get tracks
@@ -65,7 +75,7 @@ export async function GET({ locals, url }) {
   return json({ tracks, pagination, count });
 }
 
-function filterPromise(promise, search, status, library_id, album_id, sort_foreign, sort_by, sort_order) {
+function filterPromise(promise, search, status, library_id, album_id, tag_id, sort_foreign, sort_by, sort_order) {
   if (search) {
     promise.ilike('title', '%'+search+'%');
   }
@@ -77,6 +87,9 @@ function filterPromise(promise, search, status, library_id, album_id, sort_forei
   }
   if (album_id) {
     promise.eq('album_id', album_id);
+  }
+  if (tag_id) {
+    promise.eq('tag_track.tag_id', tag_id);
   }
   // sorting
   if (sort_foreign && sort_foreign != "null") {

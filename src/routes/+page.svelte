@@ -53,9 +53,11 @@
   let showFilterDropdown = $state(false);
   let selectedLibraryId = $state(0);
   let selectedAlbumId = $state(0);
+  let selectedTagId = $state(0);
   let selectedStatusId = $state(0);
   let showLoadingMask = ($derived(sorting || filtering || searching));
 
+  // libraries
   let libraryOptions = [{
     id: 0,
     label: "All libraries"
@@ -67,6 +69,7 @@
     });
   }
 
+  // albums
   let albumOptions = [{
     id: 0,
     label: "All albums"
@@ -78,9 +81,22 @@
     });
   }
 
+  // tags
+  let tagOptions = [{
+    id: 0,
+    label: "All tags"
+  }];
+  for (let i in tags) {
+    tagOptions.push({
+      id: tags[i].id,
+      label: tags[i].title + ' (' + tags[i].count_tracks + ')'
+    });
+  }
+
+  // statuses
   let statusOptions = [{
     id: 0,
-    label: "All"
+    label: "All statuses"
   },
   {
     id: "signed",
@@ -152,6 +168,12 @@
       }
       else {
         delete params.album_id;
+      }
+      if (selectedTagId) {
+        params.tag_id = selectedTagId;
+      }
+      else {
+        delete params.tag_id;
       }
       if (selectedStatusId) {
         params.status = selectedStatusId;
@@ -232,6 +254,9 @@
       </div>
       <div class="toolbar-item">
         <SelectDropdown options={albumOptions} bind:selectedValue={selectedAlbumId} icon="filter.svg" change={filterList} />
+      </div>
+      <div class="toolbar-item">
+        <SelectDropdown options={tagOptions} bind:selectedValue={selectedTagId} icon="filter.svg" change={filterList} />
       </div>
       <div class="toolbar-item">
         <SelectDropdown options={statusOptions} bind:selectedValue={selectedStatusId} icon="filter.svg" change={filterList} />
