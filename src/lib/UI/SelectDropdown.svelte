@@ -34,6 +34,7 @@
     color: #000;
     font-size: 1rem;
     font-family: var(--font-body);
+    cursor: pointer;
   }
 
   select.form {

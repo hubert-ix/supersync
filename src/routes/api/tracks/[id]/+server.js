@@ -38,7 +38,7 @@ export async function PATCH({ locals, params, request, fetch }) {
   }
   // update tags links
   await locals.supabase.from('tag_track').delete().eq('track_id', params.id);
-  for (let i in libraries) {
+  for (let i in tags) {
     await locals.supabase.from("tag_track").insert({track_id: params.id, tag_id: tags[i]});
   }
   return json({});

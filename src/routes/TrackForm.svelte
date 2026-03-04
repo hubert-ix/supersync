@@ -18,13 +18,17 @@
   import * as api from '$lib/api';
  
   let { 
-    track = null,
-    libraries,
-    albums,
-    tags,
+    tr = null,
+    l,
+    a,
+    t,
     onCancel = () => {},
     onSubmit = () => {},
   } = $props();
+  let track = $state(tr);
+  let libraries = $state(l);
+  let albums = $state(a);
+  let tags = $state(t);
   let mode = (track)?"edit":"add";
   let changed = $state(false);
   let submitting = $state(false);
@@ -160,7 +164,7 @@
 </script>
 
 
-<div class="form width-xlarge {mode}" transition:slide>
+<div class="form width-xlarge {mode}">
   <form onsubmit={handleSubmit}>
     
     <div class="top">

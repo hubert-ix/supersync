@@ -233,6 +233,14 @@
   function openTrack(track) {
     track.show_form = !track.show_form;
   }
+
+  function displayTags(track) {
+    let arr = [];    
+    for (let id of track.tags) {
+      arr.push(tags.find(t => t.id == id)?.title);
+    }
+    return arr.join(", ");
+  }
 </script>
 
 
@@ -292,9 +300,9 @@
     {#if showAddtrack}
       <div class="add-track">
         <TrackForm 
-          {libraries}
-          {albums}
-          {tags}
+          l={libraries}
+          a={albums}
+          t={tags}
           onCancel={() => showAddtrack = false} 
           onSubmit={addTrack}
         />
@@ -363,9 +371,7 @@
                   {track.album?.title}
                 </td>
                 <td>
-                  {#each track.tags as tagId}
-                    {tags.find(l => l.id == tagId)?.title}
-                  {/each}
+                  {displayTags(track)}
                 </td>
                 <td>
                   {dayjs(track.created).format("DD/MM/YYYY")}
@@ -375,10 +381,10 @@
                 <tr>
                   <td colspan="5" class="bare">
                     <TrackForm 
-                      {libraries} 
-                      {albums} 
-                      {track} 
-                      {tags}
+                      l={libraries} 
+                      a={albums} 
+                      tr={track} 
+                      t={tags}
                       onCancel={() => track.show_form = false}
                       onSubmit={(values) => updateTrack(track, values)}
                     />
